@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use Illuminate\Http\Request;
+use DB;
 
 class OrderController extends Controller
 {
@@ -14,7 +15,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-      return view('order.index',['orders'=>Order::all()]);
+      $query = DB::raw('SELECT * FROM orders');
+      $orders = Order::fromQuery($query);
+      return view('order.index',['orders'=>$orders]);
     }
 
     /**
@@ -46,9 +49,18 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-      $order = Order::with('items')->find($id);
+      $query = DB::raw('SELECT * FROM orders WHERE order_no = :order_no');
+      $order = Order::fromQuery($query, ['order_no'=>$id])->first();
+
+      $query = DB::raw('SELECT *
+                        FROM items, made_of
+                        WHERE items.item_no = made_of.item_no
+                        AND made_of.order_no = :order_no');
+      $madeof_items = DB::select($query, ['order_no'=>$id]);
+
       return view('order.show')
-        ->with('order',$order);
+        ->with('order',$order)
+        ->with('items',$madeof_items);
     }
 
     /**

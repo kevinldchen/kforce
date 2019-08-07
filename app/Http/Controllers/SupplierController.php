@@ -16,7 +16,9 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return view('supplier.index',['suppliers'=>Supplier::all()]);
+        $query = DB::raw('SELECT * FROM suppliers');
+        $suppliers = Supplier::fromQuery($query);
+        return view('supplier.index',['suppliers'=>$suppliers]);
     }
 
     /**
@@ -57,10 +59,15 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
-        $supplier = Supplier::with('contracts')->find($id);
-        //ideally $supplier->contracts;
+        $query = DB::raw('SELECT * FROM suppliers WHERE supplier_no = :supplier_no');
+        $supplier = Supplier::fromQuery($query, ['supplier_no'=>$id])->first();
+
+        $query = DB::raw('SELECT * FROM contracts WHERE supplier_no = :supplier_no');
+        $contracts = Contract::fromQuery($query, ['supplier_no'=>$id]);
+
         return view('supplier.show')
-          ->with('supplier',$supplier);
+          ->with('supplier',$supplier)
+          ->with('contracts',$contracts);
     }
 
     /**

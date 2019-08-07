@@ -19,20 +19,20 @@
                 {{ $order->date_completed }}
                 <br><br>
                 <b>Items</b>
-                @if($order->items->count() > 0)
+                @if(count($items) > 0)
                   <table>
                     <tr><th>Item No</th><th>Item Description</th><th>Order Quantity</th></tr>
-                    @foreach($order->items as $item)
+                    @foreach($items as $item)
                       <tr>
                         <td>{{ $item->item_no }}</td>
                         <td>{{ $item->item_description}}</td>
-                        <td>{{ $item->madeof->order_qty}}</td>
+                        <td>{{ $item->order_qty}}</td>
                         <td>[<a href="/item/{{ $item->item_no }}">View</a>]</td>
                       </tr>
                     @endforeach
                   </table>
                 @else
-                  No items for this contract.
+                  No items for this order.
                 @endif
             </div>
         </div>

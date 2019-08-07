@@ -15,7 +15,9 @@ class ProjectController extends Controller
      */
     public function index()
     {
-      return view('project.index',['projects'=>Project::all()]);
+      $query = DB::raw('SELECT * FROM projects');
+      $projects = Project::fromQuery($query);
+      return view('project.index',['projects'=>$projects]);
     }
 
     /**
@@ -41,7 +43,7 @@ class ProjectController extends Controller
         'project_data' => 'required|max:20',
       ]);
 
-      DB::insert('insert into projects (project_no, project_data) values (?, ?)',
+      DB::insert('INSERT INTO projects (project_no, project_data) VALUES (?, ?)',
         [$request->project_no, $request->project_data]);
 
       return redirect()->back()->with('message', 'Project created.');
@@ -55,9 +57,15 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-      $project = Project::find($id);
+      $query = DB::raw('SELECT * FROM projects WHERE project_no = :project_no');
+      $project = Project::fromQuery($query, ['project_no'=>$id])->first();
+
+      $query = DB::raw('SELECT * FROM orders WHERE project_no = :project_no');
+      $orders = Project::fromQuery($query, ['project_no'=>$id]);
+
       return view('project.show')
-        ->with('project',$project);
+        ->with('project',$project)
+        ->with('orders',$orders);
     }
 
     /**

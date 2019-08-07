@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contract;
 use Illuminate\Http\Request;
+use DB;
 
 class ContractController extends Controller
 {
@@ -14,7 +15,9 @@ class ContractController extends Controller
      */
     public function index()
     {
-      return view('contract.index',['contracts'=>Contract::all()]);
+      $query = DB::raw('SELECT * FROM contracts');
+      $contracts = Contract::fromQuery($query);
+      return view('contract.index',['contracts'=>$contracts]);
     }
 
     /**
@@ -43,10 +46,10 @@ class ContractController extends Controller
         'contract_amount' => 'required|digits_between:1,6|integer|min:1'
       ]);
 
-      DB::insert('insert into contracts (contract_no, date_of_contract) values (?,?)',
+      DB::insert('INSERT INTO contracts (contract_no, date_of_contract) VALUES (?,?)',
         [$request->contract_no, $request->date_of_contract]);
 
-      DB::insert('insert into to_supply (contract_no, item_no, contract_price, contract_amount) values (?, ?, ?, ?)',
+      DB::insert('INSERT INTO to_supply (contract_no, item_no, contract_price, contract_amount) VALUES (?, ?, ?, ?)',
         [$request->contract_no, $request->item_no, $request->contract_price, $request->contract_amount]);
 
       return redirect()->back()->with('message', 'Contract created.')->withInput($request);
@@ -60,9 +63,25 @@ class ContractController extends Controller
      */
     public function show($id)
     {
-      $contract = Contract::with('items')->find($id);
+      $query = DB::raw('SELECT * FROM contracts WHERE contract_no = :contract_no');
+      $contract = Contract::fromQuery($query, ['contract_no'=>$id])->first();
+
+      $query = DB::raw('SELECT *
+                        FROM orders, made_of
+                        WHERE orders.order_no = made_of.order_no
+                        AND orders.contract_no = :contract_no');
+      $orders = DB::select($query, ['contract_no'=>$id]);
+
+      $query = DB::raw('SELECT *
+                        FROM items, to_supply
+                        WHERE items.item_no = to_supply.item_no
+                        AND to_supply.contract_no = :contract_no');
+      $item_supply = DB::select($query, ['contract_no'=>$id]);
+
       return view('contract.show')
-        ->with('contract',$contract);
+        ->with('contract',$contract)
+        ->with('orders',$orders)
+        ->with('items', $item_supply);
     }
 
     /**

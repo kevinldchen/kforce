@@ -15,7 +15,9 @@ class ItemController extends Controller
      */
     public function index()
     {
-      return view('item.index',['items'=>Item::all()]);
+      $query = DB::raw('SELECT * FROM items');
+      $items = Item::fromQuery($query);
+      return view('item.index',['items'=>$items]);
     }
 
     /**
@@ -41,7 +43,7 @@ class ItemController extends Controller
         'item_description' => 'required|max:20',
       ]);
 
-      DB::insert('insert into items (item_no, item_description) values (?, ?)',
+      DB::insert('INSERT INTO items (item_no, item_description) VALUES (?, ?)',
         [$request->item_no, $request->item_description]);
 
       return redirect()->back()->with('message', 'Item created.');
@@ -55,9 +57,26 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-      $item = Item::with('contracts')->with('orders')->find($id);
+      $query = DB::raw('SELECT * FROM items WHERE item_no = :item_no');
+      $item = Item::fromQuery($query, ['item_no'=>$id])->first();
+
+      $query = DB::raw('SELECT *
+                        FROM contracts, to_supply
+                        WHERE contracts.contract_no = to_supply.contract_no
+                        AND to_supply.item_no = :item_no');
+      $contract_supply = DB::select($query, ['item_no'=>$id]);
+
+      $query = DB::raw('SELECT *
+                        FROM orders, made_of
+                        WHERE orders.order_no = made_of.order_no
+                        AND made_of.item_no = :item_no');
+      $order_madeof = DB::select($query, ['item_no'=>$id]);
+
+      //$item = Item::with('contracts')->with('orders')->find($id);
       return view('item.show')
-        ->with('item',$item);
+        ->with('item',$item)
+        ->with('contracts',$contract_supply)
+        ->with('orders',$order_madeof);
     }
 
     /**

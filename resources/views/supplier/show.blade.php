@@ -15,10 +15,10 @@
                 {{ $supplier->supplier_address }}
                 <br><br>
                 <b>Contracts</b>
-                @if($supplier->contracts->count() > 0)
+                @if(count($contracts) > 0)
                   <table>
                     <tr><th>Contract No</th><th>Date of Contract</th></tr>
-                    @foreach($supplier->contracts as $contract)
+                    @foreach($contracts as $contract)
                       <tr>
                         <td>{{ $contract->contract_no }}</td>
                         <td>{{ $contract->date_of_contract}}</td>
