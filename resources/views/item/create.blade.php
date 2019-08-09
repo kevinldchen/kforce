@@ -5,7 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Create Item</div>
+                <div class="card-header text-center">Create Item</div>
+                <div class="card-body">
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -21,14 +22,20 @@
                   {{ session()->get('message') }}
                 </div>
                 @endif
-
                 {{ Form::open(array('url' => 'item')) }}
-                    <b>{{ Form::label('item_no', 'Item No') }}</b>
-                    {{ Form::number('item_no') }}<br>
-                    <b>{{ Form::label('item_description', 'Item Description') }}</b>
-                    {{ Form::text('item_description') }}<br>
-                    {{ Form::submit('Create') }}
+                <div class="form-group">
+                    {{ Form::label('item_no', 'Item No') }}
+                    {{ Form::number('item_no','',['class'=>'form-control']) }}
+                </div>
+                <div class="form-group">
+                    {{ Form::label('item_description', 'Item Description') }}
+                    {{ Form::text('item_description','',['class'=>'form-control']) }}
+                </div>
+                <div class="col text-center">
+                    {{ Form::submit('Create',['class'=>'btn btn-success']) }}
+                </div>
                 {{ Form::close() }}
+                </div>
             </div>
         </div>
     </div>

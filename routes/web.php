@@ -42,4 +42,6 @@ Route::get('contract/{id}', 'ContractController@show'); //must go last. wildcard
 Route::post('order', 'OrderController@store');
 Route::get('order/index', 'OrderController@index');
 Route::get('order/create', 'OrderController@create');
-Route::get('order/{id}', 'OrderController@show'); //must go last. wildcard will eat other routes
+Route::get('order/{id}/additem', 'OrderController@addItem')-> where('id', '[0-9]+');
+Route::post('order/{id}/additem', 'OrderController@createMadeOf')-> where('id', '[0-9]+');
+Route::get('order/{id}', 'OrderController@show')-> where('id', '[0-9]+');; //must go last. wildcard will eat other routes

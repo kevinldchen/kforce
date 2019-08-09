@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Order;
 use Illuminate\Http\Request;
 use DB;
+use Route;
+use App\Project;
+use App\Contract;
+use App\Item;
 
 class OrderController extends Controller
 {
@@ -27,7 +31,24 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+
+      $query = DB::raw('SELECT * FROM projects');
+      $projects = Project::fromQuery($query);
+
+      $projects_ddl = ['0'=>''];
+      foreach($projects as $project) {
+        $projects_ddl[$project->project_no] = $project->project_no." - ".$project->project_data;
+      }
+
+      $query = DB::raw('SELECT * FROM contracts');
+      $contracts = Contract::fromQuery($query);
+
+      $contracts_ddl = ['0'=>''];
+      foreach($contracts as $contract) {
+        $contracts_ddl[$contract->contract_no] = $contract->contract_no." - ".$contract->date_of_contract;
+      }
+
+      return view('order.create',['projects'=>$projects_ddl,'contracts'=>$contracts_ddl]);
     }
 
     /**
@@ -38,7 +59,17 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $validatedData = $request->validate([
+        'order_no' => 'required|unique:orders|integer|digits_between:1,6',
+        'date_required' => 'required|date',
+        'contract_no' => 'required|exists:contracts|integer|digits_between:1,8',
+        'project_no' => 'required|exists:projects|integer|digits_between:1,8'
+      ]);
+
+      DB::insert('INSERT INTO orders (order_no, date_required, contract_no, project_no) VALUES (?,?,?,?)',
+        [$request->order_no, $request->date_required, $request->contract_no, $request->project_no]);
+
+      return redirect()->back()->with('message', 'Order created.');
     }
 
     /**
@@ -61,6 +92,81 @@ class OrderController extends Controller
       return view('order.show')
         ->with('order',$order)
         ->with('items',$madeof_items);
+    }
+
+
+    public function addItem($id) {
+      $query = DB::raw('SELECT * FROM orders WHERE order_no = :order_no');
+      $order = Order::fromQuery($query, ['order_no'=>$id])->first();
+
+      $query = DB::raw('SELECT *
+                        FROM items, made_of
+                        WHERE items.item_no = made_of.item_no
+                        AND made_of.order_no = :order_no');
+      $madeof_items = DB::select($query, ['order_no'=>$id]);
+
+      $query = DB::raw('SELECT *
+                        FROM items, to_supply
+                        WHERE items.item_no = to_supply.item_no
+                        AND to_supply.contract_no = :contract_no
+                        AND items.item_no NOT IN (
+                          SELECT item_no
+                          FROM made_of
+                          WHERE order_no = :order_no
+                        )');
+      $items = DB::select($query, ['contract_no'=>$order->contract_no,'order_no'=>$order->order_no]);
+
+      $items_ddl = ['0'=>''];
+      foreach($items as $item) {
+        $items_ddl[$item->item_no] = $item->item_no." - ".$item->item_description;
+      }
+
+      return view('order.additem')
+        ->with('order',$order)
+        ->with('items',$madeof_items)
+        ->with('items_ddl',$items_ddl);
+    }
+
+    public function createMadeOf(Request $request) {
+      $validatedData = $request->validate([
+        'item_no' => 'required|exists:items|integer|digits_between:1,6',
+        'order_qty' => 'required|integer|min:1|digits_between:1,6'
+      ]);
+
+
+
+      $order_no = Route::current()->parameter('id');
+      $query = DB::raw("SELECT * FROM orders where order_no = :order_no");
+      $order = Order::fromQuery($query, ['order_no'=>$order_no])->first();
+
+      DB::enableQueryLog(); // Enable query log
+
+      // Your Eloquent query
+
+
+
+      //test if number of items is sufficient!
+      $query = DB::raw("SELECT (SELECT contract_amount FROM to_supply WHERE contract_no = :contract_no AND item_no = :item_no) - COALESCE(SUM(order_qty),0) AS remaining
+                        FROM made_of, orders
+                        WHERE made_of.order_no = orders.order_no
+                        AND orders.contract_no = :contract_no2
+                        AND made_of.item_no = :item_no2
+                        GROUP BY item_no, contract_no
+                        ");
+      $quantity = DB::select($query,['contract_no'=>$order->contract_no,
+                                      'item_no'=>$request->item_no,
+                                      'contract_no2'=>$order->contract_no,
+                                      'item_no2'=>$request->item_no]);
+
+      if($quantity[0]->remaining - $request->order_qty < 0) {
+        return back()->withErrors('Order quantity exceeds amount available!')->withInput();
+      }
+
+
+      DB::insert('INSERT INTO made_of (order_no, item_no, order_qty) VALUES (?,?,?)',
+        [$order->order_no, $request->item_no, $request->order_qty]);
+
+      return redirect()->back()->with('message', 'Order created.');
     }
 
     /**
