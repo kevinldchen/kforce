@@ -7,7 +7,6 @@
             <div class="card">
                 <div class="card-header text-center">Dashboard</div>
 
-                <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
@@ -43,9 +42,8 @@
                         </tr>
                       </tbody>
                     </table>
-                    <p><strong>Reports</strong><br>
-                      <a href="{{route('report.qtyagg')}}">Order Totals by Contract and Item</a></p>
-                </div>
+                    <div class="p-2"><strong>Reports</strong><br>
+                      <a href="{{route('report.qtyagg')}}">Order Totals by Contract and Item</a></div>
             </div>
         </div>
     </div>
