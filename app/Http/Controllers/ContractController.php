@@ -75,9 +75,10 @@ class ContractController extends Controller
     public function show($id)
     {
       $query = DB::raw('SELECT *
-                        FROM contracts, suppliers
-                        WHERE contracts.supplier_no = suppliers.supplier_no
-                        AND contract_no = :contract_no');
+                        FROM contracts
+                        LEFT JOIN suppliers
+                        ON contracts.supplier_no = suppliers.supplier_no
+                        WHERE contract_no = :contract_no');
       $contract = DB::select($query, ['contract_no'=>$id])[0];
 
       $query = DB::raw('SELECT *
@@ -86,11 +87,22 @@ class ContractController extends Controller
                         AND orders.contract_no = :contract_no');
       $orders = DB::select($query, ['contract_no'=>$id]);
 
-      $query = DB::raw('SELECT *
-                        FROM items, to_supply
-                        WHERE items.item_no = to_supply.item_no
-                        AND to_supply.contract_no = :contract_no');
-      $item_supply = DB::select($query, ['contract_no'=>$id]);
+      $query = DB::raw('SELECT items.*,to_supply.*,IFNULL(total_ordered,0) AS total_ordered
+                        FROM items
+                        INNER JOIN to_supply
+	                      ON items.item_no = to_supply.item_no
+                        LEFT JOIN (
+                          SELECT SUM(order_qty) AS total_ordered,item_no
+                          FROM made_of,orders
+                          WHERE made_of.order_no = orders.order_no
+                          AND contract_no=:contract_no
+                          GROUP BY item_no
+                        ) j
+                        ON (j.item_no = items.item_no)
+                        WHERE to_supply.contract_no = :contract_no2');
+      $item_supply = DB::select($query, ['contract_no'=>$id,'contract_no2'=>$id]);
+
+      //dd($item_supply);
 
       return view('contract.show')
         ->with('contract',$contract)

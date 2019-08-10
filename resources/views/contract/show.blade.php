@@ -16,13 +16,16 @@
                   <dd class="col-sm-9">{{ $contract->date_of_contract }}</dd>
 
                   <dt class="col-sm-3">Supplier No:</dt>
-                  <dd class="col-sm-9"><a href="/supplier/{{$contract->supplier_no}}">{{ $contract->supplier_no }}</a></dd>
-
+                  @if($contract->supplier_no)
+                    <dd class="col-sm-9"><a href="/supplier/{{$contract->supplier_no}}">{{ $contract->supplier_no ? : "-" }}</a></dd>
+                  @else
+                    <dd class="col-sm-9">-</dd>
+                  @endif
                   <dt class="col-sm-3">Supplier Name:</dt>
-                  <dd class="col-sm-9">{{ $contract->supplier_name }}</dd>
+                  <dd class="col-sm-9">{{ $contract->supplier_name ? : "-" }}</dd>
 
                   <dt class="col-sm-3">Supplier Address:</dt>
-                  <dd class="col-sm-9">{!! nl2br(e($contract->supplier_address)) !!}</dd>
+                  <dd class="col-sm-9">{!! nl2br(e($contract->supplier_address?:"-")) !!}</dd>
                 </dl>
                 <div>
                 <b>Items</b><br>
@@ -34,6 +37,8 @@
                       <th scope="col">Item Description</th>
                       <th scope="col">Contract Price</th>
                       <th scope="col">Contract Amount</th>
+                      <th scope="col">Amount Ordered</th>
+                      <th scope="col">Amount Available</th>
                       <th scope="col"></th>
                     </tr>
                   </thead>
@@ -43,6 +48,8 @@
                         <td>{{ $item->item_description}}</td>
                         <td>{{ $item->contract_price}}</td>
                         <td>{{ $item->contract_amount}}</td>
+                        <td>{{ $item->total_ordered}}</td>
+                        <td>{{ $item->contract_amount - $item->total_ordered}}</td>
                         <td><a href="/item/{{ $item->item_no }}">View</a></td>
                       </tr>
                     @endforeach

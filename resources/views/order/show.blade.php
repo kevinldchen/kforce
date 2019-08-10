@@ -28,6 +28,7 @@
                       <th scope="col">Item No</th>
                       <th scope="col">Item Description</th>
                       <th scope="col">Order Quantity</th>
+                      <th scope="col">Item Price</th>
                       <th scope="col"></th>
                     </tr>
                   </thead>
@@ -36,6 +37,7 @@
                         <td>{{ $item->item_no }}</td>
                         <td>{{ $item->item_description}}</td>
                         <td>{{ $item->order_qty}}</td>
+                        <td>{{ $item->contract_price}}</td>
                         <td><a href="/item/{{ $item->item_no }}">View</a></td>
                       </tr>
                     @endforeach

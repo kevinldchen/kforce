@@ -84,14 +84,15 @@ class OrderController extends Controller
       $order = Order::fromQuery($query, ['order_no'=>$id])->first();
 
       $query = DB::raw('SELECT *
-                        FROM items, made_of
+                        FROM items, made_of, to_supply
                         WHERE items.item_no = made_of.item_no
+                        AND to_supply.item_no = made_of.item_no
                         AND made_of.order_no = :order_no');
-      $madeof_items = DB::select($query, ['order_no'=>$id]);
+      $items = DB::select($query, ['order_no'=>$id]);
 
       return view('order.show')
         ->with('order',$order)
-        ->with('items',$madeof_items);
+        ->with('items',$items);
     }
 
 
@@ -139,12 +140,6 @@ class OrderController extends Controller
       $query = DB::raw("SELECT * FROM orders where order_no = :order_no");
       $order = Order::fromQuery($query, ['order_no'=>$order_no])->first();
 
-      DB::enableQueryLog(); // Enable query log
-
-      // Your Eloquent query
-
-
-
       //test if number of items is sufficient!
       $query = DB::raw("SELECT (SELECT contract_amount FROM to_supply WHERE contract_no = :contract_no AND item_no = :item_no) - COALESCE(SUM(order_qty),0) AS remaining
                         FROM made_of, orders
@@ -159,7 +154,7 @@ class OrderController extends Controller
                                       'item_no2'=>$request->item_no]);
 
       if($quantity[0]->remaining - $request->order_qty < 0) {
-        return back()->withErrors('Order quantity exceeds amount available!')->withInput();
+        return back()->withErrors('Order quantity exceeds amount available ('.$quantity[0]->remaining.')!')->withInput();
       }
 
 

@@ -37,7 +37,7 @@
                     @endforeach
                   </table>
                 @else
-                  No contracts for this supplier.
+                  <p>No contracts for this supplier.</p>
                 @endif
               </div>
             </div>

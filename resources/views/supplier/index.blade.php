@@ -6,13 +6,13 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header text-center">{{ __('Suppliers') }}</div>
-                <table class="table table-hover">
+                <table class="table">
                   <thead>
                   <tr>
                     <th scope="col">Supplier No</th>
                     <th scope="col">Supplier Name</th>
                     <th scope="col">Supplier Address</th>
-                    <th scope="col"><a href="/supplier/create" class="btn btn-success btn-sm">New</a></th>
+                    <th scope="col"><a href="/supplier/create">New</a></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -21,8 +21,7 @@
                       <td>{{ $supplier->supplier_no }}</td>
                       <td>{{ $supplier->supplier_name}}</td>
                       <td>{{ $supplier->supplier_address}}</td>
-                      <td><a href="/supplier/{{ $supplier->supplier_no }}" class="btn btn-primary
-                         btn-sm">View</a></td>
+                      <td><a href="/supplier/{{ $supplier->supplier_no }}">View</a></td>
                     </tr>
                   @endforeach
                 </tbody>

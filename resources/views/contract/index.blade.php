@@ -6,13 +6,13 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header text-center">{{ __('Contracts') }}</div>
-                <table class="table table-hover">
+                <table class="table">
                   <thead>
                   <tr>
                     <th scope="col">Contract No</th>
                     <th scope="col">Supplier No</th>
                     <th scope="col">Date of Contract</th>
-                    <th scope="col"><a href="/contract/create" class="btn btn-success btn-sm">New</a></th>
+                    <th scope="col"><a href="/contract/create">New</a></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -21,7 +21,7 @@
                       <td>{{ $contract->contract_no }}</td>
                       <td>{{ $contract->supplier_no? : "-"}}</td>
                       <td>{{ $contract->date_of_contract}}</td>
-                      <td><a href="/contract/{{ $contract->contract_no }}" class="btn btn-primary btn-sm">View</a></td>
+                      <td><a href="/contract/{{ $contract->contract_no }}">View</a></td>
                     </tr>
                   @endforeach
                 </tbody>
