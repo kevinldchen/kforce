@@ -19,7 +19,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware('auth')->group(function () {
   Route::post('supplier', 'SupplierController@store');
   Route::get('supplier/index', 'SupplierController@index')->name('supplier.index');
   Route::get('supplier/create', 'SupplierController@create')->name('supplier.create');
