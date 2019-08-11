@@ -87,8 +87,9 @@ class OrderController extends Controller
                         FROM items, made_of, to_supply
                         WHERE items.item_no = made_of.item_no
                         AND to_supply.item_no = made_of.item_no
-                        AND made_of.order_no = :order_no');
-      $items = DB::select($query, ['order_no'=>$id]);
+                        AND made_of.order_no = :order_no
+                        AND to_supply.contract_no = :contract_no');
+      $items = DB::select($query, ['order_no'=>$order->order_no,'contract_no'=>$order->contract_no]);
 
       return view('order.show')
         ->with('order',$order)
