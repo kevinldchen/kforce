@@ -69,7 +69,7 @@ class OrderController extends Controller
       DB::insert('INSERT INTO orders (order_no, date_required, contract_no, project_no) VALUES (?,?,?,?)',
         [$request->order_no, $request->date_required, $request->contract_no, $request->project_no]);
 
-      return redirect()->back()->with('message', 'Order created.');
+      return redirect()->route('order.additem',['id'=>$request->order_no])->with('message', 'Order created.');
     }
 
     /**
@@ -153,6 +153,8 @@ class OrderController extends Controller
                                       'contract_no2'=>$order->contract_no,
                                       'item_no2'=>$request->item_no]);
 
+                                      //dd($quantity);
+
       if($quantity[0]->remaining - $request->order_qty < 0) {
         return back()->withErrors('Order quantity exceeds amount available ('.$quantity[0]->remaining.')!')->withInput();
       }
@@ -161,7 +163,7 @@ class OrderController extends Controller
       DB::insert('INSERT INTO made_of (order_no, item_no, order_qty) VALUES (?,?,?)',
         [$order->order_no, $request->item_no, $request->order_qty]);
 
-      return redirect()->back()->with('message', 'Order created.');
+      return redirect()->back()->with('message', 'Item added to order.');
     }
 
     /**

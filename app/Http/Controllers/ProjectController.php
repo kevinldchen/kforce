@@ -46,7 +46,7 @@ class ProjectController extends Controller
       DB::insert('INSERT INTO projects (project_no, project_data) VALUES (?, ?)',
         [$request->project_no, $request->project_data]);
 
-      return redirect()->back()->with('message', 'Project created.');
+      return redirect()->route('project.show',['id'=>$request->project_no])->with('message', 'Project created.');
     }
 
     /**

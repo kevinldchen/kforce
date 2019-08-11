@@ -48,7 +48,7 @@ class SupplierController extends Controller
         DB::insert('insert into suppliers (supplier_no, supplier_address, supplier_name) values (?, ?, ?)',
           [$request->supplier_no, $request->supplier_address, $request->supplier_name]);
 
-        return redirect()->back()->with('message', 'Supplier created.');
+        return redirect()->route('supplier.show',['id'=>$request->supplier_no])->with('message', 'Supplier created.');
     }
 
     /**

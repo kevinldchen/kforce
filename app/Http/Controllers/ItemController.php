@@ -46,7 +46,7 @@ class ItemController extends Controller
       DB::insert('INSERT INTO items (item_no, item_description) VALUES (?, ?)',
         [$request->item_no, $request->item_description]);
 
-      return redirect()->back()->with('message', 'Item created.');
+      return redirect()->route('item.show',['id'=>$request->item_no])->with('message', 'Item created.');
     }
 
     /**

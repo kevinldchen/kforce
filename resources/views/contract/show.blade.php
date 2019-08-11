@@ -8,6 +8,11 @@
             <div class="card">
                 <div class="card-header text-center">{{ __('Contract Details') }}</div>
                 <div class="card-body">
+                  @if(session()->has('message'))
+                  <div class="alert alert-success">
+                    {{ session()->get('message') }}
+                  </div>
+                  @endif
                 <dl class="row">
                   <dt class="col-sm-3">Contract No:</dt>
                   <dd class="col-sm-9">{{ $contract->contract_no }}</dd>

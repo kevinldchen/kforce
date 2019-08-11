@@ -74,7 +74,7 @@
                     @endforeach
                   </table>
                 @else
-                  No items for this order.
+                  <p>No items for this order.</p>
                 @endif
               </div>
             </div>

@@ -63,7 +63,7 @@ class ContractController extends Controller
 
         //->withInput($request)
 
-      return redirect()->back()->with('message', 'Contract created.');
+      return redirect()->route('contract.show',['id'=>$request->contract_no])->with('message', 'Contract created.');
     }
 
     /**
