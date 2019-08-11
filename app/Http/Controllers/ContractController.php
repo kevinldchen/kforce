@@ -92,15 +92,15 @@ class ContractController extends Controller
                         INNER JOIN to_supply
 	                      ON items.item_no = to_supply.item_no
                         LEFT JOIN (
-                          SELECT SUM(order_qty) AS total_ordered,item_no
+                          SELECT SUM(order_qty) AS total_ordered,item_no,contract_no
                           FROM made_of,orders
                           WHERE made_of.order_no = orders.order_no
-                          AND contract_no=:contract_no
-                          GROUP BY item_no
+                          GROUP BY item_no,contract_no
                         ) j
-                        ON (j.item_no = items.item_no)
-                        WHERE to_supply.contract_no = :contract_no2');
-      $item_supply = DB::select($query, ['contract_no'=>$id,'contract_no2'=>$id]);
+                        ON j.item_no = items.item_no
+                        AND j.contract_no = to_supply.contract_no
+                        WHERE to_supply.contract_no = :contract_no');
+      $item_supply = DB::select($query, ['contract_no'=>$id]);
 
       //dd($item_supply);
 
