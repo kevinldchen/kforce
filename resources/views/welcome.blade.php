@@ -87,11 +87,10 @@
                 <div class="links">
                     <a href="/products">Products</a>
                     <a href="/solutions">Solutions</a>
-                    <a href="/about">About Us</a>
+                    <a href="/team">Team</a>
                     <a href="/contact">Contact</a>
                     <a href="/news">News</a>
                     <a href="/blog">Blog</a>
-                    <a href="{{ route('login') }}">Login</a>
                 </div>
             </div>
         </div>

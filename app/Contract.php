@@ -19,4 +19,9 @@ class Contract extends Model
         ->as('tosupply')
         ->withPivot('contract_price','contract_amount');
     }
+
+    public function orders() {
+      return $this->hasMany('App\Order','contract_no');
+    }
+
 }

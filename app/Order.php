@@ -16,6 +16,13 @@ class Order extends Model
       ->withPivot('order_qty');
   }
 
-  //belongsTo - project
+  public function project() {
+    return $this->belongsTo('App\Project','project_no');
+  }
+
+  public function contract() {
+    return $this->belongsTo('App\Contract','contract_no');
+  }
+
 
 }
