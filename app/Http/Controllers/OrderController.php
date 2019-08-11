@@ -134,26 +134,25 @@ class OrderController extends Controller
         'order_qty' => 'required|integer|min:1|digits_between:1,6'
       ]);
 
-
-
       $order_no = Route::current()->parameter('id');
       $query = DB::raw("SELECT * FROM orders where order_no = :order_no");
       $order = Order::fromQuery($query, ['order_no'=>$order_no])->first();
 
       //test if number of items is sufficient!
-      $query = DB::raw("SELECT (SELECT contract_amount FROM to_supply WHERE contract_no = :contract_no AND item_no = :item_no) - COALESCE(SUM(order_qty),0) AS remaining
-                        FROM made_of, orders
-                        WHERE made_of.order_no = orders.order_no
-                        AND orders.contract_no = :contract_no2
-                        AND made_of.item_no = :item_no2
-                        GROUP BY item_no, contract_no
+      $query = DB::raw("SELECT contract_amount - IFNULL(total_ordered,0) AS remaining
+                        FROM to_supply
+                        LEFT JOIN (
+                          SELECT SUM(order_qty) AS total_ordered,item_no,contract_no
+                          FROM made_of,orders
+                          WHERE made_of.order_no = orders.order_no
+                          GROUP BY item_no,contract_no
+                        ) j
+                        ON j.item_no = to_supply.item_no AND j.contract_no = to_supply.contract_no
+                        WHERE to_supply.contract_no = :contract_no
+                        AND to_supply.item_no = :item_no
                         ");
       $quantity = DB::select($query,['contract_no'=>$order->contract_no,
-                                      'item_no'=>$request->item_no,
-                                      'contract_no2'=>$order->contract_no,
-                                      'item_no2'=>$request->item_no]);
-
-                                      //dd($quantity);
+                                      'item_no'=>$request->item_no]);
 
       if($quantity[0]->remaining - $request->order_qty < 0) {
         return back()->withErrors('Order quantity exceeds amount available ('.$quantity[0]->remaining.')!')->withInput();
