@@ -83,15 +83,6 @@
                 <div class="title m-b-md">
                     Kforce
                 </div>
-
-                <div class="links">
-                    <a href="/products">Products</a>
-                    <a href="/solutions">Solutions</a>
-                    <a href="/team">Team</a>
-                    <a href="/contact">Contact</a>
-                    <a href="/news">News</a>
-                    <a href="/blog">Blog</a>
-                </div>
             </div>
         </div>
     </body>
