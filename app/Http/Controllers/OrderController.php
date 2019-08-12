@@ -72,7 +72,7 @@ class OrderController extends Controller
 
       $contracts_ddl = ['0'=>''];
       foreach($contracts as $contract) {
-        $contracts_ddl[$contract->contract_no] = $contract->contract_no." - ".$contract->date_of_contract;
+        $contracts_ddl[$contract->contract_no] = $contract->contract_no;
       }
 
       return view('order.create',['projects'=>$projects_ddl,'contracts'=>$contracts_ddl]);
