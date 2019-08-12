@@ -32,16 +32,8 @@
                     <input type="date" name="date_of_contract" id="date_of_contract" value="{{ old('date_of_contract') }}" class="form-control">
                   </div>
                   <div class="form-group">
-                    {{ Form::label('item_no', 'Item No') }}
-                    {{ Form::select('item_no',$items,'',['class'=>'form-control']) }}
-                  </div>
-                  <div class="form-group">
-                    {{ Form::label('contract_price', 'Contract Price') }}
-                    {{ Form::number('contract_price','',['class'=>'form-control']) }}
-                  </div>
-                  <div class="form-group">
-                    {{ Form::label('contract_amount', 'Contract Amount') }}
-                    {{ Form::number('contract_amount','',['class'=>'form-control']) }}
+                    {{ Form::label('supplier_no', 'Supplier No') }}
+                    {{ Form::select('supplier_no',$suppliers,'',['class'=>'form-control']) }}
                   </div>
                   <div class="col text-center">
                     {{ Form::submit('Create',['class'=>'btn btn-success']) }}

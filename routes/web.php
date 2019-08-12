@@ -38,7 +38,10 @@ Route::middleware('auth')->group(function () {
   Route::post('contract', 'ContractController@store');
   Route::get('contract/index', 'ContractController@index')->name('contract.index');
   Route::get('contract/create', 'ContractController@create')->name('contract.create');
-  Route::get('contract/{id}', 'ContractController@show')->name('contract.show'); //must go last. wildcard will eat other routes
+  Route::get('contract/{id}/additem', 'ContractController@addItem')-> where('id', '[0-9]+')->name('contract.additem');
+  Route::post('contract/{id}/additem', 'ContractController@createToSupply')-> where('id', '[0-9]+');
+  Route::get('contract/{id}', 'ContractController@show')-> where('id', '[0-9]+')->name('contract.show'); //must go last. wildcard will eat other routes
+
 
   Route::post('order', 'OrderController@store');
   Route::get('order/index', 'OrderController@index')->name('order.index');
