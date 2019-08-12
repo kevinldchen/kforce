@@ -17,11 +17,38 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($page = 1)
     {
-      $query = DB::raw('SELECT * FROM orders');
-      $orders = Order::fromQuery($query);
-      return view('order.index',['orders'=>$orders]);
+      $page_size = 10000;
+      $offset = ($page-1)*$page_size;
+      $query = DB::raw('SELECT * FROM orders LIMIT :page_size OFFSET :offset');
+      $orders = Order::fromQuery($query,['page_size'=>$page_size,'offset'=>$offset]);
+
+      $query = DB::raw('SELECT count(*) as totals FROM orders');
+      $stats = DB::select($query)[0];
+
+      $total_orders = $stats->totals;
+      $num_pages = ceil($total_orders/$page_size);
+
+      $nav_size = 5;
+      if ($num_pages < $nav_size)
+        $nav_size = $num_pages;
+
+
+      $nav_offset = $page-floor($nav_size/2);
+      if ($page < ceil($nav_size/2)) {
+        $nav_offset = 1;
+      }
+      else if ($page + ceil($nav_size/2) > $num_pages) {
+        $nav_offset = $num_pages - (min($nav_size,$num_pages)-1);
+      }
+
+      return view('order.index')
+        ->with('orders',$orders)
+        ->with('num_pages',$num_pages)
+        ->with('current_page',$page)
+        ->with('nav_offset',$nav_offset)
+        ->with('nav_size',$nav_size);
     }
 
     /**

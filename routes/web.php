@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
 
   Route::post('order', 'OrderController@store');
   Route::get('order/index', 'OrderController@index')->name('order.index');
+  Route::get('order/index/{page}', 'OrderController@index')->name('order.index');
   Route::get('order/create', 'OrderController@create')->name('order.create');
   Route::get('order/{id}/additem', 'OrderController@addItem')-> where('id', '[0-9]+')->name('order.additem');
   Route::post('order/{id}/additem', 'OrderController@createMadeOf')-> where('id', '[0-9]+');
