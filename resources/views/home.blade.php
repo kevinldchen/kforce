@@ -37,7 +37,7 @@
                         </tr>
                         <tr>
                           <th scope="row">Orders</th>
-                          <td><a href="{{route('order.index')}}">View All</a></td>
+                          <td><a href="{{route('order.index',1)}}">View All</a></td>
                           <td><a href="{{route('order.create')}}">Create New</a></td>
                         </tr>
                       </tbody>
