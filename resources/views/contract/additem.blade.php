@@ -73,15 +73,23 @@
 
                 <b>Items</b>
                 @if(count($items) > 0)
-                  <table>
-                    <tr><th>Item No</th><th>Item Description</th><th>Contract Price</th><th>Contract Amount</th></tr>
+                  <table class="table table-sm">
+                    <thead>
+                    <tr>
+                      <th scope="col">Item No</th>
+                      <th scope="col">Item Description</th>
+                      <th scope="col">Contract Price</th>
+                      <th scope="col">Contract Amount</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
                     @foreach($items as $item)
                       <tr>
                         <td>{{ $item->item_no }}</td>
                         <td>{{ $item->item_description}}</td>
                         <td>{{ $item->contract_price}}</td>
                         <td>{{ $item->contract_amount}}</td>
-                        <td>[<a href="/item/{{ $item->item_no }}">View</a>]</td>
+                        <td><a href="/item/{{ $item->item_no }}">View</a></td>
                       </tr>
                     @endforeach
                   </table>
