@@ -19,7 +19,7 @@ class OrderController extends Controller
      */
     public function index($page = 1)
     {
-      $page_size = 10000;
+      $page_size = 2000;
       $offset = ($page-1)*$page_size;
       $query = DB::raw('SELECT * FROM orders LIMIT :page_size OFFSET :offset');
       $orders = Order::fromQuery($query,['page_size'=>$page_size,'offset'=>$offset]);
